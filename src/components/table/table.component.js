@@ -30,6 +30,7 @@ import Genoa from '../../assets/Lecce.png';
 import Lecce from '../../assets/Lecce.png';
 import SPAL from '../../assets/Lecce.png';
 import Brescia from '../../assets/Lecce.png';
+import Udinese from '../../assets/Lecce.png';
 
 
 const images = {
@@ -53,6 +54,7 @@ const images = {
     Lecce,
     SPAL,
     Brescia,
+    Udinese,
 };
 
 class Table extends Component {
