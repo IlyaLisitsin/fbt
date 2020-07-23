@@ -6,6 +6,7 @@ const ROWS_FETCH_ERROR = 'ROWS-FETCH_ERROR';
 
 const initialState = {
   rowsCollection: [],
+  errorMessage: null,
   isRowsCollectionFetching: false,
 };
 
@@ -20,7 +21,7 @@ const reducer = (state = initialState, action = {}) => {
       return { ...state, isRowsCollectionFetching: false, rowsCollection: payload };
 
     case ROWS_FETCH_ERROR:
-      return { ...state, isRowsCollectionFetching: false };
+      return { ...state, isRowsCollectionFetching: false, errorMessage: payload };
 
     default:
       return state;
@@ -39,7 +40,10 @@ export const getRowsFinal = dispatch => {
             payload,
           })
       ).catch(err => {
-    dispatch({ type: ROWS_FETCH_ERROR });
-    console.warn(err);
+
+    dispatch({
+        type: ROWS_FETCH_ERROR,
+        payload: err.toString(),
+    });
   });
 };

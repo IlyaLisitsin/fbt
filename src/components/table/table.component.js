@@ -1,75 +1,98 @@
-import React, { Component, Fragment } from 'react';
-import styled from 'styled-components';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getRowsFinal } from '../../reducers/table-rows';
+import {
+    TableS,
+    CounterTd,
+    PointsTd,
+    NameTd,
+    Container,
+} from './styles';
 
-const TableS = styled.table`
-    border-spacing:0 5px;
-    border-collapse: separate;
+import Juventus from '../../assets/Juventus.jpg';
+import Internazionale from '../../assets/Internazionale.png';
+import Napoli from '../../assets/Napoli.png';
+import Milan from '../../assets/Milan.png';
+import Roma from '../../assets/Roma.png';
+import Atalanta from '../../assets/Atalanta.png';
+import Sampdoria from '../../assets/Sampdoria.png';
+import Leece from '../../assets/Lecce.png';
+import Lazio from '../../assets/Lecce.png';
 
-    tr:last-child th:first-child {
-        border-bottom-left-radius: 9px;
-        border-top-left-radius: 9px;
-    }
-    
-    tr:last-child th:last-child {
-        border-bottom-right-radius: 9px;
-        border-top-right-radius: 9px;
-    }
-    
-    tr td:first-child {
-        border-bottom-left-radius: 9px;
-        border-top-left-radius: 9px;
-    }
-    
-    tr td:last-child {
-        border-bottom-right-radius: 9px;
-        border-top-right-radius: 9px;
-    }
-    
-    td {
-        background: #fff;
-    }
-    
-    th {
-        background: #fff;
-        padding-top: 18px;
-        padding-bottom: 15px;
-    }
-    
-    th, td {
-        padding-left: 31px;
-        padding-right: 31px;
-        padding-top: 18px;
-        padding-bottom: 18px;
-    }
-    
-    thead {
-        font-size: 11px;
-    }
-`;
+import Verona from '../../assets/Lecce.png';
+import Parma from '../../assets/Lecce.png';
+import Bologna from '../../assets/Lecce.png';
+import Sassuolo from '../../assets/Lecce.png';
+import Cagliari from '../../assets/Lecce.png';
+import Fiorentina from '../../assets/Lecce.png';
+import Torino from '../../assets/Lecce.png';
+import Genoa from '../../assets/Lecce.png';
+import Lecce from '../../assets/Lecce.png';
+import SPAL from '../../assets/Lecce.png';
+import Brescia from '../../assets/Lecce.png';
+
+
+const images = {
+    Juventus,
+    Internazionale,
+    Lazio,
+    Leece,
+    Napoli,
+    Milan,
+    Roma,
+    Atalanta,
+    Sampdoria,
+    Verona,
+    Parma,
+    Bologna,
+    Sassuolo,
+    Cagliari,
+    Fiorentina,
+    Torino,
+    Genoa,
+    Lecce,
+    SPAL,
+    Brescia,
+};
 
 class Table extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            activeTrs: [],
+        }
     }
 
     componentDidMount() {
         this.props.getRowsFinal();
     }
 
-    render() {
+    trClick = (index) => {
+        let activeTrs = this.state.activeTrs;
+        if (activeTrs.includes(index)) {
+            activeTrs = activeTrs.filter(i => i !== index);
+        } else {
+            activeTrs.push(index);
+        }
 
-        return <Fragment>
+        this.setState({ ...this.state, activeTrs });
+    };
+
+    render() {
+        const { activeTrs } = this.state;
+
+        return this.props.errorMessage
+            ? <div>Error occured: {this.props.errorMessage}</div>
+            : <Container>
                 {
                     this.props.isRowsCollectionFetching
                         ? <div>Loading...</div>
                         : <TableS>
                             <thead>
                             <tr>
-                                <th>Positions</th>
-                                <th></th>
+                                <th className='positions'>Positions</th>
+                                <th className='names'></th>
                                 <th>Pts.</th>
                                 <th>P.</th>
                                 <th>W.</th>
@@ -81,27 +104,34 @@ class Table extends Component {
                             </tr>
                             </thead>
                             <tbody>
-                            { this.props.rowsCollection.map((row, index) => <tr key={`#${row.Name}`}>
-                                <td>{++index}</td>
-                                <td>{row.Name}</td>
-                                <td>{row.Points}</td>
-                                <td>{row.Played}</td>
-                                <td>{row.Won}</td>
-                                <td>{row.Drawn}</td>
-                                <td>{row.Lost}</td>
-                                <td>{row.For}</td>
-                                <td>{row.Against}</td>
-                                <td>{row.GoalDiff}</td>
-                            </tr>)}
+                            { this.props.rowsCollection.map((row, index) =>
+                                <tr onClick={() => this.trClick(index)}
+                                    key={`#${row.Name}`}
+                                    className={activeTrs.includes(index) ? 'active' : ''}
+                                >
+                                    <CounterTd>{index + 1}</CounterTd>
+                                    <NameTd>
+                                        <div className='image-container'><img height={25} src={images[row.Name]}/></div>
+                                        <div>{row.Name}</div>
+                                    </NameTd>
+                                    <PointsTd>{row.Points}</PointsTd>
+                                    <td>{row.Played}</td>
+                                    <td>{row.Won}</td>
+                                    <td>{row.Drawn}</td>
+                                    <td>{row.Lost}</td>
+                                    <td>{row.For}</td>
+                                    <td>{row.Against}</td>
+                                    <td>{row.GoalDiff}</td>
+                                </tr>)}
                             </tbody>
                         </TableS>
                 }
-            </Fragment>
+            </Container>
     }
 }
 
 export default connect(
-    ({ rows: { rowsCollection, isRowsCollectionFetching } }) => ({ rowsCollection, isRowsCollectionFetching }),
+    ({ rows: { rowsCollection, isRowsCollectionFetching, errorMessage } }) => ({ rowsCollection, isRowsCollectionFetching, errorMessage }),
     {
         getRowsFinal: () => getRowsFinal,
     }
